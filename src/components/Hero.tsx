@@ -52,7 +52,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative h-screen w-full overflow-hidden"
+      className="relative h-[100svh] w-full overflow-hidden"
     >
       {/* Background Image with parallax */}
       <div ref={heroRef} className="absolute inset-0 will-change-transform">
@@ -75,16 +75,16 @@ export default function Hero() {
       {/* Content */}
       <div
         ref={contentRef}
-        className="relative z-10 flex flex-col justify-end h-full max-w-[1400px] mx-auto px-6 md:px-10 pb-16 md:pb-24"
+        className="relative z-10 flex h-full max-w-[1400px] flex-col justify-end px-4 pb-14 sm:px-6 sm:pb-16 md:px-10 md:pb-24"
       >
-        <h1 className="max-w-[12ch] text-4xl md:text-6xl lg:text-7xl font-semibold text-white leading-[1.05] tracking-tight">
+        <h1 className="max-w-[12ch] text-3xl font-semibold leading-[1.06] tracking-tight text-white sm:text-4xl md:text-6xl lg:text-7xl">
           A New Health System
         </h1>
-        <div className="mt-4 max-w-[34rem] md:mt-6 space-y-1.5">
-          <p className="text-base md:text-lg text-white/85 font-light">
+        <div className="mt-3 max-w-[34rem] space-y-1.5 sm:mt-4 md:mt-6">
+          <p className="text-sm font-light text-white/85 sm:text-base md:text-lg">
             Joyzen is not a clinic.
           </p>
-          <p className="text-base md:text-lg text-white/85 font-light">
+          <p className="text-sm font-light text-white/85 sm:text-base md:text-lg">
             It&apos;s a new way of delivering reproductive healthcare.
           </p>
         </div>

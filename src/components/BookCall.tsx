@@ -5,6 +5,8 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import MagneticButton from "@/components/MagneticButton";
+
 gsap.registerPlugin(ScrollTrigger);
 
 export default function BookCall() {
@@ -32,15 +34,15 @@ export default function BookCall() {
     <section
       ref={sectionRef}
       id="book-call"
-      className="relative overflow-hidden py-16 md:py-28 bg-[#fbf8f2]"
+      className="relative overflow-hidden bg-[#fbf8f2] py-14 sm:py-16 md:py-28"
     >
       {/* Subtle transition gradient from Modern Life */}
       <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-[#f0f4f8] to-transparent pointer-events-none z-0" />
-      <div className="absolute bottom-[-30%] left-[-10%] w-full md:w-[60%] h-[70%] bg-[#d8ebf7] rounded-full blur-[140px] opacity-40 pointer-events-none" />
-      <div className="absolute bottom-[-30%] right-[-10%] w-full md:w-[60%] h-[70%] bg-[#ecdcf9] rounded-full blur-[140px] opacity-40 pointer-events-none" />
+      <div className="pointer-events-none absolute bottom-[-30%] left-[-10%] h-[70%] w-full rounded-full bg-[#d8ebf7] opacity-40 blur-[110px] sm:blur-[130px] md:w-[60%] md:blur-[140px]" />
+      <div className="pointer-events-none absolute bottom-[-30%] right-[-10%] h-[70%] w-full rounded-full bg-[#ecdcf9] opacity-40 blur-[110px] sm:blur-[130px] md:w-[60%] md:blur-[140px]" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(180deg,rgba(216,235,247,0)_0%,rgba(216,235,247,0.6)_60%,#d8ebf7_100%)] pointer-events-none" />
-      <div className="max-w-[1100px] mx-auto px-6 md:px-10">
-        <div className="cta-card cta-glass p-10 md:p-16 relative overflow-hidden">
+      <div className="mx-auto max-w-[1100px] px-4 sm:px-6 md:px-10">
+        <div className="cta-card cta-glass relative overflow-hidden p-6 sm:p-8 md:p-16">
           <div className="absolute inset-y-0 right-4 hidden w-64 items-center justify-center md:flex md:right-10 md:w-80">
             <div className="absolute h-52 w-52 rounded-full bg-[radial-gradient(circle,rgba(196,176,224,0.18)_0%,rgba(255,255,255,0)_72%)] blur-3xl" />
             <Image
@@ -54,31 +56,33 @@ export default function BookCall() {
           </div>
 
           <div className="relative z-10 max-w-[550px]">
-            <h2 className="text-3xl md:text-5xl font-semibold text-foreground mb-5 tracking-tight">
+            <h2 className="mb-4 text-2xl font-semibold tracking-tight text-foreground sm:mb-5 sm:text-3xl md:text-5xl">
               Book a clarity call
             </h2>
-            <p className="text-base md:text-lg text-text-secondary leading-relaxed mb-8">
+            <p className="mb-7 text-sm leading-relaxed text-text-secondary sm:mb-8 sm:text-base md:text-lg">
               If you would like to understand your reproductive health better or learn how
               Joyzen can support your journey, you can schedule a conversation with our care team.
             </p>
-            <a
-              href="#"
-              className="btn-primary glass-button inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium text-foreground"
-              id="book-clarity-call-btn"
-            >
-              Book Clarity Call
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+            <MagneticButton strength={30}>
+              <a
+                href="#"
+                className="btn-primary glass-button inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-foreground sm:px-6 sm:py-3"
+                id="book-clarity-call-btn"
               >
-                <circle cx="12" cy="8" r="4" />
-                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
-              </svg>
-            </a>
+                Book Clarity Call
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+                </svg>
+              </a>
+            </MagneticButton>
           </div>
         </div>
       </div>

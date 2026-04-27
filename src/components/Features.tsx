@@ -226,82 +226,51 @@ export default function Features() {
 
           <div
             ref={cardsShellRef}
-            className="relative z-10 flex flex-col gap-4 pb-8 md:absolute md:inset-0 md:justify-center md:gap-10 md:pb-0"
+            className="relative z-10 flex flex-col gap-4 pb-8 md:absolute md:inset-0 md:justify-center md:pb-0"
           >
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5">
-              {features.slice(0, 3).map((feature, idx) => (
-                <div
-                  key={idx}
-                  ref={(el) => {
-                    cardsRef.current[idx] = el;
-                  }}
-                  className={`bento-card rounded-[2rem] overflow-hidden ${
-                    feature.type === "text"
-                      ? "glass-card flex min-h-[220px] flex-col justify-end p-8 md:min-h-[260px]"
-                      : "glass-card min-h-[220px] p-1.5 md:min-h-[260px]"
-                  }`}
-                >
-                  {feature.type === "text" ? (
-                    <>
-                      <h3 className="mb-3 text-xl font-semibold text-foreground md:text-2xl">
-                        {feature.title}
-                      </h3>
-                      <p className="text-sm leading-relaxed text-text-secondary md:text-base">
-                        {feature.description}
-                      </p>
-                    </>
-                  ) : (
-                    <div className="relative h-full min-h-[220px] w-full overflow-hidden rounded-[1.55rem] md:min-h-[260px]">
-                      <Image
-                        src={feature.image!}
-                        alt={feature.alt!}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 767px) 100vw, 33vw"
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div className="hidden h-28 md:block" />
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5">
-              {features.slice(3).map((feature, idx) => (
-                <div
-                  key={idx + 3}
-                  ref={(el) => {
-                    cardsRef.current[idx + 3] = el;
-                  }}
-                  className={`bento-card rounded-[2rem] overflow-hidden ${
-                    feature.type === "text"
-                      ? "glass-card flex min-h-[220px] flex-col justify-end p-8 md:min-h-[260px]"
-                      : "glass-card min-h-[220px] p-1.5 md:min-h-[260px]"
-                  }`}
-                >
-                  {feature.type === "text" ? (
-                    <>
-                      <h3 className="mb-3 text-xl font-semibold text-foreground md:text-2xl">
-                        {feature.title}
-                      </h3>
-                      <p className="text-sm leading-relaxed text-text-secondary md:text-base">
-                        {feature.description}
-                      </p>
-                    </>
-                  ) : (
-                    <div className="relative h-full min-h-[220px] w-full overflow-hidden rounded-[1.55rem] md:min-h-[260px]">
-                      <Image
-                        src={feature.image!}
-                        alt={feature.alt!}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 767px) 100vw, 33vw"
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
+              {features.map((feature, idx) => {
+                const isMiddle = idx === 1 || idx === 4;
+                
+                return (
+                  <div
+                    key={idx}
+                    ref={(el) => {
+                      cardsRef.current[idx] = el;
+                    }}
+                    className={`bento-card rounded-[2rem] overflow-hidden ${
+                      idx === 1 ? "md:self-start" : idx === 4 ? "md:self-end" : ""
+                    } ${
+                      isMiddle ? "md:h-64" : "md:h-96"
+                    } ${
+                      feature.type === "text"
+                        ? "glass-card flex min-h-[240px] flex-col justify-end p-8 md:p-10"
+                        : "glass-card min-h-[240px] p-2"
+                    }`}
+                  >
+                    {feature.type === "text" ? (
+                      <>
+                        <h3 className="mb-3 text-xl font-semibold text-foreground md:text-2xl">
+                          {feature.title}
+                        </h3>
+                        <p className="text-sm leading-relaxed text-text-secondary md:text-base">
+                          {feature.description}
+                        </p>
+                      </>
+                    ) : (
+                      <div className="relative h-full min-h-[220px] w-full overflow-hidden rounded-[1.55rem]">
+                        <Image
+                          src={feature.image!}
+                          alt={feature.alt!}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 767px) 100vw, 33vw"
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

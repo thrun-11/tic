@@ -57,6 +57,8 @@ export const metadata: Metadata = {
 };
 
 import SmoothScroll from "@/components/SmoothScroll";
+import Preloader from "@/components/Preloader";
+import NoiseOverlay from "@/components/NoiseOverlay";
 
 export default function RootLayout({
   children,
@@ -68,7 +70,11 @@ export default function RootLayout({
       <body
         className={`${epilogue.variable} ${satoshi.variable} antialiased`}
       >
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          <Preloader />
+          <NoiseOverlay />
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );

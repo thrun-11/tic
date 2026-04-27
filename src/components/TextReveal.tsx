@@ -52,6 +52,15 @@ const FEATURES = [
   },
 ];
 
+const DESKTOP_SLOT_CLASSES = [
+  "md:col-start-1 md:col-span-4 md:row-start-1",
+  "md:col-start-5 md:col-span-4 md:row-start-1",
+  "md:col-start-9 md:col-span-4 md:row-start-1",
+  "md:col-start-1 md:col-span-4 md:row-start-2 md:row-span-2",
+  "md:col-start-5 md:col-span-4 md:row-start-3",
+  "md:col-start-9 md:col-span-4 md:row-start-2 md:row-span-2",
+] as const;
+
 export default function TextReveal() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -99,32 +108,82 @@ export default function TextReveal() {
         (card): card is HTMLDivElement => card !== null
       );
       const isMobile = window.matchMedia("(max-width: 767px)").matches;
-      const cardOffsets = isMobile
-        ? [
-            { x: 0, y: 100 },
-            { x: 0, y: 100 },
-            { x: 0, y: 100 },
-            { x: 0, y: 100 },
-            { x: 0, y: 100 },
-            { x: 0, y: 100 },
-          ]
-        : [
-            { x: 220, y: 140 },
-            { x: 0, y: 150 },
-            { x: -220, y: 140 },
-            { x: 220, y: -140 },
-            { x: 0, y: -150 },
-            { x: -220, y: -140 },
-          ];
+      const setCardsFromLogoOrigin = () => {
+        const logoBounds = logoRef.current?.getBoundingClientRect();
+        const stageBounds = stageRef.current?.getBoundingClientRect();
 
-      cards.forEach((card, idx) => {
-        gsap.set(card, {
-          opacity: 0,
-          scale: 0.7,
-          filter: "blur(10px)",
-          ...cardOffsets[idx],
+        const originX = logoBounds
+          ? logoBounds.left + logoBounds.width / 2
+          : stageBounds
+            ? stageBounds.left + stageBounds.width / 2
+            : window.innerWidth / 2;
+
+        const originY = logoBounds
+          ? logoBounds.top + logoBounds.height / 2
+          : stageBounds
+            ? stageBounds.top + stageBounds.height / 2
+            : window.innerHeight / 2;
+
+        cards.forEach((card) => {
+          const cardBounds = card.getBoundingClientRect();
+          const cardCenterX = cardBounds.left + cardBounds.width / 2;
+          const cardCenterY = cardBounds.top + cardBounds.height / 2;
+
+          gsap.set(card, {
+            opacity: 0,
+            scale: isMobile ? 0.78 : 0.72,
+            filter: "blur(10px)",
+            x: originX - cardCenterX,
+            y: originY - cardCenterY,
+          });
         });
-      });
+      };
+
+      setCardsFromLogoOrigin();
+
+      // Magnetic Hover Physics
+      const cleanups: (() => void)[] = [];
+      if (!isMobile) {
+        cards.forEach((card) => {
+          const xTo = gsap.quickTo(card, "rotateY", { ease: "power3.out", duration: 0.5 });
+          const yTo = gsap.quickTo(card, "rotateX", { ease: "power3.out", duration: 0.5 });
+          const glowXTo = gsap.quickTo(card, "--x", { ease: "power3.out", duration: 0.2 });
+          const glowYTo = gsap.quickTo(card, "--y", { ease: "power3.out", duration: 0.2 });
+          const opacityTo = gsap.quickTo(card, "--opacity", { ease: "power3.out", duration: 0.5 });
+
+          const onMouseMove = (e: MouseEvent) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            // Calculate tilt (max 6 degrees)
+            const rotateX = ((y - centerY) / centerY) * -6;
+            const rotateY = ((x - centerX) / centerX) * 6;
+            
+            xTo(rotateY);
+            yTo(rotateX);
+            glowXTo(x);
+            glowYTo(y);
+            opacityTo(1);
+          };
+
+          const onMouseLeave = () => {
+            xTo(0);
+            yTo(0);
+            opacityTo(0);
+          };
+
+          card.addEventListener("mousemove", onMouseMove);
+          card.addEventListener("mouseleave", onMouseLeave);
+
+          cleanups.push(() => {
+            card.removeEventListener("mousemove", onMouseMove);
+            card.removeEventListener("mouseleave", onMouseLeave);
+          });
+        });
+      }
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -133,9 +192,10 @@ export default function TextReveal() {
           end: "bottom bottom",
           pin: stageRef.current,
           pinSpacing: false,
-          scrub: 0.85,
+          scrub: isMobile ? 0.55 : 0.85,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          onRefreshInit: setCardsFromLogoOrigin,
         },
       });
 
@@ -225,7 +285,8 @@ export default function TextReveal() {
             duration: 1.05,
             stagger: 0.06,
             ease: "none",
-          }
+          },
+          ">+0.12"
         )
         .to(
           {},
@@ -233,6 +294,8 @@ export default function TextReveal() {
             duration: 0.8,
           }
         );
+
+      return () => cleanups.forEach((fn) => fn());
     }, stageRef);
 
     return () => ctx.revert();
@@ -275,127 +338,84 @@ export default function TextReveal() {
     <section
       ref={sectionRef}
       id="about"
-      className="relative h-[560vh] overflow-hidden bg-[#fbf8f2] gradient-pastel md:h-[620vh]"
+      className="relative h-[500vh] overflow-hidden bg-[#fbf8f2] gradient-pastel sm:h-[540vh] md:h-[620vh]"
     >
       <div
         ref={stageRef}
-        className="flex min-h-screen items-center overflow-hidden"
+        className="flex min-h-[100svh] items-start overflow-hidden md:min-h-screen md:items-center"
       >
         <div className="absolute inset-0 bg-[#fbf8f2]" />
-        <div className="absolute inset-0 gradient-pastel opacity-95" />
+        <div className="absolute inset-0 gradient-pastel opacity-80" />
         <div className="absolute left-[-12%] top-[8%] h-64 w-64 rounded-full bg-orange-primary/10 blur-3xl" />
         <div className="absolute bottom-[-8%] right-[-4%] h-72 w-72 rounded-full bg-sky-200/28 blur-3xl" />
 
-        <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1280px] items-center px-6 md:px-10">
+        <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1280px] items-center px-4 sm:px-6 md:min-h-screen md:px-10">
           <div
             ref={textRef}
-            className="mx-auto max-w-[1100px] text-center text-[clamp(2rem,3vw,4rem)] leading-[1.15] font-medium tracking-tight"
+            className="mx-auto max-w-[1100px] text-center text-[clamp(1.45rem,5.4vw,2.8rem)] leading-[1.18] font-medium tracking-tight sm:leading-[1.15] md:text-[clamp(2rem,3vw,4rem)]"
           >
             {renderText()}
           </div>
 
           <div
             ref={joyzenRef}
-            className="absolute inset-x-6 top-1/2 z-20 -translate-y-1/2 md:inset-x-10"
+            className="absolute inset-x-4 top-[46%] z-20 -translate-y-1/2 sm:inset-x-6 md:inset-x-10 md:top-1/2"
           >
-            <p className="text-center text-4xl font-semibold tracking-tight text-foreground md:text-7xl">
+            <p className="text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-7xl">
               This is <span className="text-orange-primary">Joyzen</span>
             </p>
           </div>
 
           <div
             ref={logoRef}
-            className="absolute inset-x-6 top-[25%] z-20 flex -translate-y-1/2 justify-center md:top-1/2 md:inset-x-10"
+            className="absolute inset-x-4 top-[23%] z-20 flex -translate-y-1/2 justify-center sm:inset-x-6 md:top-1/2 md:inset-x-10"
           >
             <JoyzenLogo
-              className="w-[180px] md:w-[340px]"
-              sizes="(max-width: 767px) 180px, 340px"
+              className="w-[150px] sm:w-[180px] md:w-[340px]"
+              sizes="(max-width: 639px) 150px, (max-width: 767px) 180px, 340px"
             />
           </div>
 
           <div
             id="programs"
-            className="absolute inset-0 z-10 flex flex-col justify-end pb-12 pt-[30vh] md:justify-center md:pb-0 md:pt-0 pointer-events-none"
+            className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end pb-8 pt-[32vh] sm:pb-10 sm:pt-[30vh] md:justify-center md:pb-0 md:pt-0"
           >
-            {/* Unified container: Horizontal scroll on mobile, flex-col of grids on desktop */}
-            <div className="flex w-full snap-x snap-mandatory overflow-x-auto px-6 pb-6 gap-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:flex-col md:overflow-visible md:px-10 md:gap-10 md:pb-0 pointer-events-auto">
-              
-              <div className="flex shrink-0 gap-4 md:grid md:grid-cols-3 md:gap-5 md:shrink">
-                {FEATURES.slice(0, 3).map((feature, idx) => (
-                  <div
-                    key={idx}
-                    ref={(el) => {
-                      cardsRef.current[idx] = el;
-                    }}
-                    className={`bento-card shrink-0 w-[80vw] snap-center md:w-auto rounded-[1.5rem] md:rounded-[2rem] overflow-hidden ${
-                      feature.type === "text"
-                        ? "glass-card flex min-h-[260px] flex-col justify-center p-6 md:p-8"
-                        : "glass-card min-h-[260px] p-1.5"
-                    }`}
-                  >
-                    {feature.type === "text" ? (
-                      <>
-                        <h3 className="mb-2 md:mb-3 text-xl font-semibold text-foreground md:text-2xl">
-                          {feature.title}
-                        </h3>
-                        <p className="text-sm leading-relaxed text-text-secondary md:text-base">
-                          {feature.description}
-                        </p>
-                      </>
-                    ) : (
-                      <div className="relative h-full min-h-[240px] w-full overflow-hidden rounded-[1.2rem] md:min-h-[250px] md:rounded-[1.55rem]">
-                        <Image
-                          src={feature.image!}
-                          alt={feature.alt!}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 767px) 80vw, 33vw"
-                        />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="hidden h-28 shrink-0 md:block" />
-
-              <div className="flex shrink-0 gap-4 md:grid md:grid-cols-3 md:gap-5 md:shrink">
-                {FEATURES.slice(3).map((feature, idx) => (
-                  <div
-                    key={idx + 3}
-                    ref={(el) => {
-                      cardsRef.current[idx + 3] = el;
-                    }}
-                    className={`bento-card shrink-0 w-[80vw] snap-center md:w-auto rounded-[1.5rem] md:rounded-[2rem] overflow-hidden ${
-                      feature.type === "text"
-                        ? "glass-card flex min-h-[260px] flex-col justify-center p-6 md:p-8"
-                        : "glass-card min-h-[260px] p-1.5"
-                    }`}
-                  >
-                    {feature.type === "text" ? (
-                      <>
-                        <h3 className="mb-2 md:mb-3 text-xl font-semibold text-foreground md:text-2xl">
-                          {feature.title}
-                        </h3>
-                        <p className="text-sm leading-relaxed text-text-secondary md:text-base">
-                          {feature.description}
-                        </p>
-                      </>
-                    ) : (
-                      <div className="relative h-full min-h-[240px] w-full overflow-hidden rounded-[1.2rem] md:min-h-[250px] md:rounded-[1.55rem]">
-                        <Image
-                          src={feature.image!}
-                          alt={feature.alt!}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 767px) 80vw, 33vw"
-                        />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-              
+            <div className="pointer-events-auto flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:gap-4 sm:px-6 sm:pb-6 md:grid md:grid-cols-12 md:grid-rows-[minmax(250px,_1fr)_116px_minmax(235px,_1fr)] md:gap-x-5 md:gap-y-5 md:overflow-visible md:px-10 md:pb-0">
+              {FEATURES.map((feature, idx) => (
+                <div
+                  key={idx}
+                  ref={(el) => {
+                    cardsRef.current[idx] = el;
+                  }}
+                  className={`bento-card shrink-0 w-[84vw] max-w-[22rem] snap-center sm:w-[80vw] md:w-auto md:max-w-none rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] overflow-hidden ${DESKTOP_SLOT_CLASSES[idx]} ${
+                    feature.type === "text"
+                      ? "glass-card flex min-h-[228px] flex-col justify-end p-5 sm:min-h-[248px] sm:p-6 md:min-h-[260px] md:p-8"
+                      : "glass-card min-h-[228px] p-1.5 sm:min-h-[248px] md:min-h-[260px]"
+                  }`}
+                >
+                  <span aria-hidden className="bento-glow" />
+                  {feature.type === "text" ? (
+                    <>
+                      <h3 className="mb-2 text-lg font-semibold text-foreground sm:text-xl md:mb-3 md:text-2xl">
+                        {feature.title}
+                      </h3>
+                      <p className="text-sm leading-relaxed text-text-secondary md:text-base">
+                        {feature.description}
+                      </p>
+                    </>
+                  ) : (
+                    <div className="relative h-full min-h-[200px] w-full overflow-hidden rounded-[1rem] sm:min-h-[220px] sm:rounded-[1.2rem] md:min-h-[220px] md:rounded-[1.55rem]">
+                      <Image
+                        src={feature.image!}
+                        alt={feature.alt!}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 767px) 80vw, 33vw"
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>

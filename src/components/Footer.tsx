@@ -45,8 +45,8 @@ export default function Footer() {
       id="products"
       className="relative overflow-hidden bg-[#d8ebf7]"
     >
-      <div className="relative w-full overflow-hidden min-h-[400px] md:min-h-[auto] md:aspect-[12/5]">
-        <div className="absolute inset-x-0 top-0 z-10 flex flex-col gap-3 px-6 py-6 text-right text-sm text-slate-800 md:flex-row md:justify-end md:gap-14 md:px-12 md:py-8">
+      <div className="relative w-full overflow-hidden min-h-[360px] sm:min-h-[400px] md:min-h-[auto] md:aspect-[12/5]">
+        <div className="absolute inset-x-0 top-0 z-10 flex flex-col gap-3 px-4 py-5 text-left text-sm text-slate-800 sm:px-6 sm:py-6 md:flex-row md:justify-end md:gap-14 md:px-12 md:py-8 md:text-right">
           <a
             href="mailto:info@joyzenlife.com"
             className="footer-info hover:text-foreground transition-colors"
@@ -73,7 +73,7 @@ export default function Footer() {
           />
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col gap-4 px-6 py-5 text-xs text-slate-800 md:flex-row md:items-center md:justify-between md:px-12">
+        <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col gap-2 px-4 py-4 text-[11px] leading-relaxed text-slate-800 sm:gap-3 sm:px-6 sm:py-5 sm:text-xs md:flex-row md:items-center md:justify-between md:gap-4 md:px-12">
           <p>2026 Joyzen. Built for healthcare. Designed for trust.</p>
           <p>Designed and Developed by TIC Global Services</p>
         </div>
