@@ -1,26 +1,418 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #111827;
+  --orange-primary: #e8613c;
+  --orange-light: #ff8c66;
+  --text-muted: #9ca3af;
+  --text-secondary: #6b7280;
+  --card-bg: rgba(255, 255, 255, 0.54);
+  --card-border: rgba(255, 255, 255, 0.62);
+  --glass-blur: 22px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-orange-primary: var(--orange-primary);
+  --color-orange-light: var(--orange-light);
+  --color-text-muted: var(--text-muted);
+  --color-text-secondary: var(--text-secondary);
+  --font-heading: var(--font-epilogue);
+  --font-body: var(--font-satoshi);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-satoshi), system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Headings use Epilogue */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-epilogue), system-ui, -apple-system, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4c4c4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+/* ===================================================================
+   LIQUID GLASS EFFECT SYSTEM
+   Inspired by Apple's WWDC 2025 Liquid Glass design language.
+   Uses layered pseudo-elements for refraction, specular highlights,
+   and dynamic edge lighting to create a physical glass feel.
+   =================================================================== */
+
+.glass-card {
+  position: relative;
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 16px 40px -8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  isolation: isolate;
+
+  /* Layered translucent fill */
+  background:
+    linear-gradient(145deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.01) 100%
+    );
+
+  /* Core blur — heavier blur + saturation for that liquid refractive look */
+  backdrop-filter: blur(48px) saturate(200%);
+  -webkit-backdrop-filter: blur(48px) saturate(200%);
+}
+
+.glass-pill,
+.glass-button,
+.cta-glass,
+.navbar-glass {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  /* Layered translucent fill — increased transparency */
+  background:
+    linear-gradient(158deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.04) 30%,
+      rgba(248, 252, 255, 0.02) 60%,
+      rgba(240, 248, 255, 0.03) 100%
+    ),
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.01) 100%
+    );
+
+  /* Core blur — heavier blur + saturation for that liquid refractive look */
+  backdrop-filter: blur(40px) saturate(220%) brightness(1.08) contrast(1.02);
+  -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.08) contrast(1.02);
+
+  /* Very subtle bright rim — nearly invisible edge */
+  border: 0.5px solid rgba(255, 255, 255, 0.28);
+
+  /* Lighter, more diffuse shadow + soft inner caustics */
+  box-shadow:
+    0 16px 48px rgba(148, 163, 184, 0.08),
+    0 2px 12px rgba(148, 163, 184, 0.04),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -0.5px 0 rgba(255, 255, 255, 0.06);
+
+  will-change: backdrop-filter;
+}
+
+/* Specular highlight + edge refraction layer — softer, more diffuse */
+.glass-card::before,
+.glass-pill::before,
+.glass-button::before,
+.cta-glass::before,
+.navbar-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+
+  /* Top-left specular — much more diffuse and soft */
+  background:
+    radial-gradient(ellipse at 12% 6%, rgba(255, 255, 255, 0.50) 0%, rgba(255, 255, 255, 0.10) 18%, rgba(255, 255, 255, 0) 40%),
+    radial-gradient(ellipse at 88% 90%, rgba(200, 222, 255, 0.10) 0%, rgba(255, 255, 255, 0) 30%),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 55%);
+
+  mix-blend-mode: screen;
+  opacity: 0.50;
+}
+
+/* Secondary refraction shimmer — very subtle bottom glow */
+.glass-card::after,
+.cta-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+
+  background:
+    linear-gradient(178deg, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.05) 82%, rgba(255, 255, 255, 0.14) 100%),
+    radial-gradient(ellipse at 28% 100%, rgba(200, 218, 255, 0.06) 0%, rgba(255, 255, 255, 0) 50%);
+
+  mix-blend-mode: overlay;
+  opacity: 0.4;
+}
+
+.glass-card {
+  border-radius: 20px;
+}
+
+/* ===================================================================
+   SECTION GRADIENT BACKGROUNDS
+   Matching the landing.png flow:
+   Hero → warm cream → soft peach/orange blobs → cool blue/lavender
+   =================================================================== */
+
+/* Pastel gradient — the main content gradient with warm-to-cool transition */
+.gradient-pastel {
+  background-color: #fbf8f2;
+  background-image:
+    /* warm peach/apricot glow — left side */
+    radial-gradient(circle at 5% 15%, rgba(255, 195, 145, 0.40) 0%, rgba(255, 195, 145, 0) 24%),
+    /* warm golden/amber glow — center-bottom */
+    radial-gradient(circle at 50% 95%, rgba(255, 218, 145, 0.50) 0%, rgba(255, 218, 145, 0) 20%),
+    /* cool sky-blue tint — top right */
+    radial-gradient(circle at 92% 10%, rgba(185, 220, 255, 0.32) 0%, rgba(185, 220, 255, 0) 26%),
+    /* soft lavender/pink — bottom right */
+    radial-gradient(circle at 88% 85%, rgba(220, 200, 255, 0.32) 0%, rgba(220, 200, 255, 0) 22%),
+    /* cool blue — bottom left */
+    radial-gradient(circle at 10% 90%, rgba(170, 215, 255, 0.30) 0%, rgba(170, 215, 255, 0) 26%),
+    /* base warm cream gradient */
+    linear-gradient(180deg, #fbf8f2 0%, #f8f4ec 50%, #f5f0e8 100%);
+}
+
+/* Transition gradient from Hero into TextReveal — warm peach blend */
+.gradient-hero-to-content {
+  background: linear-gradient(
+    180deg,
+    #fafafa 0%,
+    #fbf7f0 25%,
+    #fbf8f2 100%
+  );
+}
+
+/* Gradient transition between bento/features and ModernLife section */
+.gradient-bento-to-modern {
+  background: linear-gradient(
+    180deg,
+    #f5f0e8 0%,
+    #f8f5ee 30%,
+    #fafafa 100%
+  );
+}
+
+/* Gradient transition from ModernLife into BookCall */
+.gradient-modern-to-cta {
+  background: linear-gradient(
+    180deg,
+    #fafafa 0%,
+    #f8f5ef 35%,
+    #f4efe7 65%,
+    #ede9e1 100%
+  );
+}
+
+/* BookCall section gradient — warm cream fading to cool blue */
+.gradient-cta {
+  background-color: #f2eee6;
+  background-image:
+    radial-gradient(circle at 8% 20%, rgba(255, 200, 155, 0.30) 0%, rgba(255, 200, 155, 0) 28%),
+    radial-gradient(circle at 92% 80%, rgba(200, 215, 245, 0.35) 0%, rgba(200, 215, 245, 0) 28%),
+    radial-gradient(circle at 50% 100%, rgba(190, 210, 240, 0.40) 0%, rgba(190, 210, 240, 0) 24%),
+    linear-gradient(180deg, #f2eee6 0%, #e8e2d8 40%, #dce6f0 75%, #d8ebf7 100%);
+}
+
+.gradient-footer {
+  background: linear-gradient(
+    180deg,
+    #d8ebf7 0%,
+    #d2e4f2 50%,
+    #c8dff0 100%
+  );
+}
+
+/* Text reveal animation classes */
+.text-reveal-word {
+  transition: color 0.1s ease, opacity 0.1s ease;
+}
+
+.text-reveal-word.revealed {
+  color: #111827;
+  opacity: 1;
+}
+
+.text-reveal-word.unrevealed {
+  color: #d1d5db;
+  opacity: 0.5;
+}
+
+.text-reveal-word.orange-word {
+  color: var(--orange-primary) !important;
+  opacity: 1 !important;
+}
+
+/* ===================================================================
+   NAV PILL INDICATOR — Sliding liquid glass bubble
+   Follows the active nav link with smooth transitions
+   =================================================================== */
+.glass-pill-indicator {
+  background:
+    linear-gradient(155deg,
+      rgba(255, 255, 255, 0.30) 0%,
+      rgba(255, 255, 255, 0.14) 50%,
+      rgba(248, 252, 255, 0.08) 100%
+    );
+  backdrop-filter: blur(24px) saturate(180%) brightness(1.12);
+  -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.12);
+  border: 0.5px solid rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 8px 32px rgba(148, 163, 184, 0.10),
+    0 2px 8px rgba(148, 163, 184, 0.05),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -0.5px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Navbar glass effect — lighter, more transparent */
+.navbar-glass {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(248, 251, 255, 0.06) 100%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0%, rgba(242, 248, 255, 0.03) 100%);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 14px 36px rgba(148, 163, 184, 0.06),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.28);
+}
+
+/* CTA glass card — larger, slightly more opaque for emphasis */
+.cta-glass {
+  border-radius: 24px;
+  background:
+    linear-gradient(158deg,
+      rgba(255, 255, 255, 0.22) 0%,
+      rgba(255, 255, 255, 0.10) 35%,
+      rgba(248, 252, 255, 0.05) 100%
+    ),
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    );
+  box-shadow:
+    0 20px 56px rgba(148, 163, 184, 0.10),
+    0 4px 18px rgba(148, 163, 184, 0.04),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -0.5px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Bento card hover effects — liquid ripple response */
+.bento-card {
+  transition:
+    transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    border-color 0.3s ease;
+}
+
+.bento-card:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 24px 72px rgba(148, 163, 184, 0.16),
+    0 6px 20px rgba(148, 163, 184, 0.06),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.48);
+  border-color: rgba(255, 255, 255, 0.42);
+}
+
+/* Button hover animation */
+.btn-primary {
+  transition:
+    transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    border-color 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(232, 97, 60, 0.2);
+}
+
+/* Glass button — nav pills and CTA buttons */
+.glass-button {
+  background:
+    linear-gradient(148deg,
+      rgba(255, 255, 255, 0.20) 0%,
+      rgba(255, 255, 255, 0.08) 100%
+    ),
+    linear-gradient(180deg,
+      rgba(248, 251, 255, 0.10) 0%,
+      rgba(248, 251, 255, 0.03) 100%
+    );
+  box-shadow:
+    0 14px 36px rgba(148, 163, 184, 0.08),
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -0.5px 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass-button:hover {
+  border-color: rgba(232, 97, 60, 0.25);
+  background:
+    linear-gradient(148deg,
+      rgba(255, 255, 255, 0.26) 0%,
+      rgba(255, 255, 255, 0.12) 100%
+    ),
+    linear-gradient(180deg,
+      rgba(248, 251, 255, 0.14) 0%,
+      rgba(248, 251, 255, 0.05) 100%
+    );
+}
+
+/* Nav link hover */
+.nav-link {
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--orange-primary);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Joyzen logo icon animation */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Selection color */
+::selection {
+  background: rgba(232, 97, 60, 0.2);
+  color: #111827;
 }
