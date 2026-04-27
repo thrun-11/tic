@@ -448,6 +448,7 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   transform-style: preserve-3d;
   will-change: transform;
+  transform: perspective(1000px);
   --x: 0;
   --y: 0;
   --opacity: 0;

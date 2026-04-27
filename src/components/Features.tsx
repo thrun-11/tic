@@ -79,15 +79,6 @@ export default function Features() {
         gsap.set(cardsShellRef.current, { opacity: 1 });
         gsap.set(logoRef.current, { opacity: 0, scale: 0.94 });
 
-        cards.forEach((card, idx) => {
-          gsap.set(card, {
-            opacity: 0,
-            scale: 0.7,
-            filter: "blur(10px)",
-            ...cardOffsets[idx],
-          });
-        });
-
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -117,8 +108,15 @@ export default function Features() {
             },
             "<0.08"
           )
-          .to(
+          .fromTo(
             cards,
+            {
+              x: (i) => cardOffsets[i].x,
+              y: (i) => cardOffsets[i].y,
+              opacity: 0,
+              scale: 0.7,
+              filter: "blur(10px)",
+            },
             {
               x: 0,
               y: 0,

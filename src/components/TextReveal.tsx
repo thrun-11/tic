@@ -89,7 +89,7 @@ export default function TextReveal() {
       });
 
       gsap.set(orangeWords, {
-        color: "#e8613c",
+        color: "#f19060",
         opacity: 1,
       });
 
@@ -145,6 +145,7 @@ export default function TextReveal() {
       const cleanups: (() => void)[] = [];
       if (!isMobile) {
         cards.forEach((card) => {
+          gsap.set(card, { transformPerspective: 1000, rotateX: 0, rotateY: 0 });
           const xTo = gsap.quickTo(card, "rotateY", { ease: "power3.out", duration: 0.5 });
           const yTo = gsap.quickTo(card, "rotateX", { ease: "power3.out", duration: 0.5 });
           const glowXTo = gsap.quickTo(card, "--x", { ease: "power3.out", duration: 0.2 });
@@ -157,11 +158,11 @@ export default function TextReveal() {
             const y = e.clientY - rect.top;
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
-            
+
             // Calculate tilt (max 6 degrees)
             const rotateX = ((y - centerY) / centerY) * -6;
             const rotateY = ((x - centerX) / centerX) * 6;
-            
+
             xTo(rotateY);
             yTo(rotateX);
             glowXTo(x);
@@ -217,7 +218,7 @@ export default function TextReveal() {
         .to(
           orangeWords,
           {
-            color: "#e8613c",
+            color: "#f19060",
             opacity: 1,
             duration: 0.2,
             ease: "none",
@@ -274,8 +275,29 @@ export default function TextReveal() {
             ease: "none",
           }
         )
-        .to(
+        .fromTo(
           cards,
+          {
+            x: (i, target) => {
+              const cardBounds = target.getBoundingClientRect();
+              const cardCenterX = cardBounds.left + cardBounds.width / 2;
+              const cardCenterY = cardBounds.top + cardBounds.height / 2;
+              const logoBounds = logoRef.current?.getBoundingClientRect();
+              const originX = logoBounds ? logoBounds.left + logoBounds.width / 2 : window.innerWidth / 2;
+              const originY = logoBounds ? logoBounds.top + logoBounds.height / 2 : window.innerHeight / 2;
+              return originX - cardCenterX;
+            },
+            y: (i, target) => {
+              const cardBounds = target.getBoundingClientRect();
+              const cardCenterY = cardBounds.top + cardBounds.height / 2;
+              const logoBounds = logoRef.current?.getBoundingClientRect();
+              const originY = logoBounds ? logoBounds.top + logoBounds.height / 2 : window.innerHeight / 2;
+              return originY - cardCenterY;
+            },
+            opacity: 0,
+            scale: isMobile ? 0.78 : 0.72,
+            filter: "blur(10px)",
+          },
           {
             x: 0,
             y: (i) => (isMobile ? i * 16 : 0),
@@ -382,7 +404,7 @@ export default function TextReveal() {
             className="absolute inset-x-4 top-[46%] z-20 -translate-y-1/2 sm:inset-x-6 md:inset-x-10 md:top-1/2"
           >
             <p className="text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-7xl">
-              This is <span className="text-orange-primary">Joyzen</span>
+              This is <span style={{ color: "#f19060" }}>Joyzen</span>
             </p>
           </div>
 
@@ -408,11 +430,10 @@ export default function TextReveal() {
                     cardsRef.current[idx] = el;
                   }}
                   style={{ zIndex: FEATURES.length - idx }}
-                  className={`bento-card col-start-1 row-start-1 mx-auto w-full max-w-[24rem] md:mx-0 md:w-auto md:max-w-none rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.08)] md:shadow-none ${DESKTOP_SLOT_CLASSES[idx]} ${
-                    feature.type === "text"
+                  className={`bento-card col-start-1 row-start-1 mx-auto w-full max-w-[24rem] md:mx-0 md:w-auto md:max-w-none rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.08)] md:shadow-none ${DESKTOP_SLOT_CLASSES[idx]} ${feature.type === "text"
                       ? "glass-card bg-white/95 flex min-h-[228px] flex-col justify-end p-5 sm:min-h-[248px] sm:p-6 md:min-h-[260px] md:p-8 relative"
                       : "glass-card min-h-[228px] p-1.5 sm:min-h-[248px] md:min-h-[260px]"
-                  }`}
+                    }`}
                 >
                   <span aria-hidden className="bento-glow" />
                   {feature.type === "text" ? (
