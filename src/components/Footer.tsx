@@ -45,7 +45,7 @@ export default function Footer() {
       id="products"
       className="relative overflow-hidden bg-[#d8ebf7]"
     >
-      <div className="relative w-full overflow-hidden" style={{ aspectRatio: "12 / 5" }}>
+      <div className="relative w-full overflow-hidden min-h-[400px] md:min-h-[auto] md:aspect-[12/5]">
         <div className="absolute inset-x-0 top-0 z-10 flex flex-col gap-3 px-6 py-6 text-right text-sm text-slate-800 md:flex-row md:justify-end md:gap-14 md:px-12 md:py-8">
           <a
             href="mailto:info@joyzenlife.com"

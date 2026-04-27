@@ -98,14 +98,24 @@ export default function TextReveal() {
       const cards = cardsRef.current.filter(
         (card): card is HTMLDivElement => card !== null
       );
-      const cardOffsets = [
-        { x: 220, y: 140 },
-        { x: 0, y: 150 },
-        { x: -220, y: 140 },
-        { x: 220, y: -140 },
-        { x: 0, y: -150 },
-        { x: -220, y: -140 },
-      ];
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
+      const cardOffsets = isMobile
+        ? [
+            { x: 0, y: 100 },
+            { x: 0, y: 100 },
+            { x: 0, y: 100 },
+            { x: 0, y: 100 },
+            { x: 0, y: 100 },
+            { x: 0, y: 100 },
+          ]
+        : [
+            { x: 220, y: 140 },
+            { x: 0, y: 150 },
+            { x: -220, y: 140 },
+            { x: 220, y: -140 },
+            { x: 0, y: -150 },
+            { x: -220, y: -140 },
+          ];
 
       cards.forEach((card, idx) => {
         gsap.set(card, {
@@ -295,7 +305,7 @@ export default function TextReveal() {
 
           <div
             ref={logoRef}
-            className="absolute inset-x-6 top-1/2 z-20 flex -translate-y-1/2 justify-center md:inset-x-10"
+            className="absolute inset-x-6 top-[25%] z-20 flex -translate-y-1/2 justify-center md:top-1/2 md:inset-x-10"
           >
             <JoyzenLogo
               className="w-[180px] md:w-[340px]"
@@ -305,82 +315,87 @@ export default function TextReveal() {
 
           <div
             id="programs"
-            className="absolute inset-0 z-10 flex flex-col justify-center gap-4 px-6 py-20 md:gap-10 md:px-10 md:py-0"
+            className="absolute inset-0 z-10 flex flex-col justify-end pb-12 pt-[30vh] md:justify-center md:pb-0 md:pt-0 pointer-events-none"
           >
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5">
-              {FEATURES.slice(0, 3).map((feature, idx) => (
-                <div
-                  key={idx}
-                  ref={(el) => {
-                    cardsRef.current[idx] = el;
-                  }}
-                  className={`bento-card rounded-[2rem] overflow-hidden ${
-                    feature.type === "text"
-                      ? "glass-card flex min-h-[220px] flex-col justify-center p-8 md:min-h-[260px]"
-                      : "glass-card min-h-[220px] p-1.5 md:min-h-[260px]"
-                  }`}
-                >
-                  {feature.type === "text" ? (
-                    <>
-                      <h3 className="mb-3 text-xl font-semibold text-foreground md:text-2xl">
-                        {feature.title}
-                      </h3>
-                      <p className="text-sm leading-relaxed text-text-secondary md:text-base">
-                        {feature.description}
-                      </p>
-                    </>
-                  ) : (
-                    <div className="relative h-full min-h-[220px] w-full overflow-hidden rounded-[1.55rem] md:min-h-[260px]">
-                      <Image
-                        src={feature.image!}
-                        alt={feature.alt!}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 767px) 100vw, 33vw"
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+            {/* Unified container: Horizontal scroll on mobile, flex-col of grids on desktop */}
+            <div className="flex w-full snap-x snap-mandatory overflow-x-auto px-6 pb-6 gap-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:flex-col md:overflow-visible md:px-10 md:gap-10 md:pb-0 pointer-events-auto">
+              
+              <div className="flex shrink-0 gap-4 md:grid md:grid-cols-3 md:gap-5 md:shrink">
+                {FEATURES.slice(0, 3).map((feature, idx) => (
+                  <div
+                    key={idx}
+                    ref={(el) => {
+                      cardsRef.current[idx] = el;
+                    }}
+                    className={`bento-card shrink-0 w-[80vw] snap-center md:w-auto rounded-[1.5rem] md:rounded-[2rem] overflow-hidden ${
+                      feature.type === "text"
+                        ? "glass-card flex min-h-[260px] flex-col justify-center p-6 md:p-8"
+                        : "glass-card min-h-[260px] p-1.5"
+                    }`}
+                  >
+                    {feature.type === "text" ? (
+                      <>
+                        <h3 className="mb-2 md:mb-3 text-xl font-semibold text-foreground md:text-2xl">
+                          {feature.title}
+                        </h3>
+                        <p className="text-sm leading-relaxed text-text-secondary md:text-base">
+                          {feature.description}
+                        </p>
+                      </>
+                    ) : (
+                      <div className="relative h-full min-h-[240px] w-full overflow-hidden rounded-[1.2rem] md:min-h-[250px] md:rounded-[1.55rem]">
+                        <Image
+                          src={feature.image!}
+                          alt={feature.alt!}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 767px) 80vw, 33vw"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
 
-            <div className="hidden h-28 md:block" />
+              <div className="hidden h-28 shrink-0 md:block" />
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5">
-              {FEATURES.slice(3).map((feature, idx) => (
-                <div
-                  key={idx + 3}
-                  ref={(el) => {
-                    cardsRef.current[idx + 3] = el;
-                  }}
-                  className={`bento-card rounded-[2rem] overflow-hidden ${
-                    feature.type === "text"
-                      ? "glass-card flex min-h-[220px] flex-col justify-center p-8 md:min-h-[260px]"
-                      : "glass-card min-h-[220px] p-1.5 md:min-h-[260px]"
-                  }`}
-                >
-                  {feature.type === "text" ? (
-                    <>
-                      <h3 className="mb-3 text-xl font-semibold text-foreground md:text-2xl">
-                        {feature.title}
-                      </h3>
-                      <p className="text-sm leading-relaxed text-text-secondary md:text-base">
-                        {feature.description}
-                      </p>
-                    </>
-                  ) : (
-                    <div className="relative h-full min-h-[220px] w-full overflow-hidden rounded-[1.55rem] md:min-h-[260px]">
-                      <Image
-                        src={feature.image!}
-                        alt={feature.alt!}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 767px) 100vw, 33vw"
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
+              <div className="flex shrink-0 gap-4 md:grid md:grid-cols-3 md:gap-5 md:shrink">
+                {FEATURES.slice(3).map((feature, idx) => (
+                  <div
+                    key={idx + 3}
+                    ref={(el) => {
+                      cardsRef.current[idx + 3] = el;
+                    }}
+                    className={`bento-card shrink-0 w-[80vw] snap-center md:w-auto rounded-[1.5rem] md:rounded-[2rem] overflow-hidden ${
+                      feature.type === "text"
+                        ? "glass-card flex min-h-[260px] flex-col justify-center p-6 md:p-8"
+                        : "glass-card min-h-[260px] p-1.5"
+                    }`}
+                  >
+                    {feature.type === "text" ? (
+                      <>
+                        <h3 className="mb-2 md:mb-3 text-xl font-semibold text-foreground md:text-2xl">
+                          {feature.title}
+                        </h3>
+                        <p className="text-sm leading-relaxed text-text-secondary md:text-base">
+                          {feature.description}
+                        </p>
+                      </>
+                    ) : (
+                      <div className="relative h-full min-h-[240px] w-full overflow-hidden rounded-[1.2rem] md:min-h-[250px] md:rounded-[1.55rem]">
+                        <Image
+                          src={feature.image!}
+                          alt={feature.alt!}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 767px) 80vw, 33vw"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              
             </div>
           </div>
         </div>
