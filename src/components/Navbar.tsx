@@ -106,7 +106,7 @@ export default function Navbar() {
           {/* Animated pill indicator */}
           <div
             ref={pillRef}
-            className="absolute top-1 left-0 h-[calc(100%-8px)] rounded-full transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] opacity-0 glass-pill-indicator bg-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]"
+            className="absolute top-1 left-0 h-[calc(100%-8px)] rounded-full transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] opacity-0 glass-pill-indicator bg-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]"
             style={{ willChange: "transform, width" }}
           />
 

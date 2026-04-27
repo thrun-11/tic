@@ -416,3 +416,32 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(232, 97, 60, 0.2);
   color: #111827;
 }
+
+/* ===================================================================
+   LIQUID BREATHING BACKGROUNDS
+   =================================================================== */
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1) translate(0, 0) rotate(0deg);
+    opacity: 0.3;
+  }
+  33% {
+    transform: scale(1.1) translate(3%, 3%) rotate(3deg);
+    opacity: 0.5;
+  }
+  66% {
+    transform: scale(0.9) translate(-2%, -2%) rotate(-2deg);
+    opacity: 0.4;
+  }
+}
+
+.animate-breathe {
+  animation: breathe 14s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-breathe-delayed {
+  animation: breathe 18s ease-in-out infinite alternate-reverse;
+  will-change: transform, opacity;
+}
