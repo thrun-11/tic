@@ -244,16 +244,16 @@ export default function Features() {
                       isMiddle ? "md:h-64" : "md:h-96"
                     } ${
                       feature.type === "text"
-                        ? "glass-card flex min-h-[240px] flex-col justify-end p-8 md:p-10"
+                        ? "glass-card bg-white/95 flex min-h-[240px] flex-col justify-end p-8 md:p-10 relative"
                         : "glass-card min-h-[240px] p-2"
                     }`}
                   >
                     {feature.type === "text" ? (
                       <>
-                        <h3 className="mb-3 text-xl font-semibold text-foreground md:text-2xl">
+                        <h3 className="mb-3 text-xl font-semibold text-slate-900 md:text-2xl">
                           {feature.title}
                         </h3>
-                        <p className="text-sm leading-relaxed text-text-secondary md:text-base">
+                        <p className="text-sm leading-relaxed text-slate-700 md:text-base">
                           {feature.description}
                         </p>
                       </>

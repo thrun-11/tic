@@ -307,9 +307,7 @@ h1, h2, h3, h4, h5, h6 {
       rgba(255, 255, 255, 0.14) 0%,
       rgba(255, 255, 255, 0.05) 48%,
       rgba(255, 255, 255, 0.018) 100%
-    ),
-    radial-gradient(circle at 88% 92%, rgba(175, 210, 255, 0.10) 0%, rgba(175, 210, 255, 0) 46%),
-    radial-gradient(circle at 12% 8%, rgba(255, 230, 200, 0.06) 0%, rgba(255, 230, 200, 0) 42%);
+    );
   border: 0;
   box-shadow:
     0 16px 36px rgba(78, 96, 122, 0.11),

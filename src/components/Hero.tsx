@@ -56,14 +56,17 @@ export default function Hero() {
     >
       {/* Background Image with parallax */}
       <div ref={heroRef} className="absolute inset-0 will-change-transform">
-        <Image
-          src="/images/heroimage.png"
-          alt="Gynecological consultation"
-          fill
-          className="object-cover"
-          priority
-          sizes="100vw"
-        />
+        <picture className="absolute inset-0">
+          <source media="(min-width: 640px)" srcSet="/images/heroimage.png" />
+          <Image
+            src="/images/IMG_1019.JPG"
+            alt="Gynecological consultation"
+            fill
+            className="object-cover object-[center_top] sm:object-center"
+            priority
+            sizes="100vw"
+          />
+        </picture>
       </div>
 
       {/* Gradient overlay */}

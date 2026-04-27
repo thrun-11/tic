@@ -192,7 +192,7 @@ export default function TextReveal() {
           end: "bottom bottom",
           pin: stageRef.current,
           pinSpacing: false,
-          scrub: isMobile ? 0.55 : 0.85,
+          scrub: isMobile ? 0.45 : 0.85,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           onRefreshInit: setCardsFromLogoOrigin,
@@ -278,22 +278,44 @@ export default function TextReveal() {
           cards,
           {
             x: 0,
-            y: 0,
+            y: (i) => (isMobile ? i * 16 : 0),
             opacity: 1,
-            scale: 1,
+            scale: (i) => (isMobile ? 1 - i * 0.05 : 1),
             filter: "blur(0px)",
             duration: 1.05,
             stagger: 0.06,
             ease: "none",
           },
           ">+0.12"
-        )
-        .to(
-          {},
-          {
-            duration: 0.8,
-          }
         );
+
+      if (isMobile) {
+        cards.forEach((card, i) => {
+          if (i < cards.length - 1) {
+            tl.to(card, {
+              y: -window.innerHeight * 0.65,
+              opacity: 0,
+              scale: 0.9,
+              duration: 1.2,
+              ease: "power2.inOut",
+            });
+            const remainingCards = cards.slice(i + 1);
+            tl.to(
+              remainingCards,
+              {
+                y: (j) => j * 16,
+                scale: (j) => 1 - j * 0.05,
+                duration: 1.2,
+                ease: "power2.inOut",
+              },
+              "<"
+            );
+          }
+        });
+        tl.to({}, { duration: 0.5 });
+      } else {
+        tl.to({}, { duration: 0.8 });
+      }
 
       return () => cleanups.forEach((fn) => fn());
     }, stageRef);
@@ -338,16 +360,14 @@ export default function TextReveal() {
     <section
       ref={sectionRef}
       id="about"
-      className="relative h-[500vh] overflow-hidden bg-[#fbf8f2] gradient-pastel sm:h-[540vh] md:h-[620vh]"
+      className="relative h-[700vh] overflow-hidden bg-[#fbf8f2] gradient-pastel md:h-[620vh]"
     >
       <div
         ref={stageRef}
         className="flex min-h-[100svh] items-start overflow-hidden md:min-h-screen md:items-center"
       >
         <div className="absolute inset-0 bg-[#fbf8f2]" />
-        <div className="absolute inset-0 gradient-pastel opacity-80" />
-        <div className="absolute left-[-12%] top-[8%] h-64 w-64 rounded-full bg-orange-primary/10 blur-3xl" />
-        <div className="absolute bottom-[-8%] right-[-4%] h-72 w-72 rounded-full bg-sky-200/28 blur-3xl" />
+        <div className="absolute inset-0 gradient-pastel opacity-50 md:opacity-80" />
 
         <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1280px] items-center px-4 sm:px-6 md:min-h-screen md:px-10">
           <div
@@ -378,28 +398,29 @@ export default function TextReveal() {
 
           <div
             id="programs"
-            className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end pb-8 pt-[32vh] sm:pb-10 sm:pt-[30vh] md:justify-center md:pb-0 md:pt-0"
+            className="pointer-events-none absolute inset-0 z-10 flex flex-col pt-[38vh] sm:pt-[36vh] items-center md:justify-center md:pt-0"
           >
-            <div className="pointer-events-auto flex w-full snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:gap-4 sm:px-6 sm:pb-6 md:grid md:grid-cols-12 md:grid-rows-[minmax(250px,_1fr)_116px_minmax(235px,_1fr)] md:gap-x-5 md:gap-y-5 md:overflow-visible md:px-10 md:pb-0">
+            <div className="pointer-events-auto w-full px-4 sm:px-6 grid grid-cols-1 grid-rows-1 md:grid-cols-12 md:grid-rows-[minmax(250px,_1fr)_116px_minmax(235px,_1fr)] md:gap-x-5 md:gap-y-5 md:px-10 md:pb-0">
               {FEATURES.map((feature, idx) => (
                 <div
                   key={idx}
                   ref={(el) => {
                     cardsRef.current[idx] = el;
                   }}
-                  className={`bento-card shrink-0 w-[84vw] max-w-[22rem] snap-center sm:w-[80vw] md:w-auto md:max-w-none rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] overflow-hidden ${DESKTOP_SLOT_CLASSES[idx]} ${
+                  style={{ zIndex: FEATURES.length - idx }}
+                  className={`bento-card col-start-1 row-start-1 mx-auto w-full max-w-[24rem] md:mx-0 md:w-auto md:max-w-none rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.08)] md:shadow-none ${DESKTOP_SLOT_CLASSES[idx]} ${
                     feature.type === "text"
-                      ? "glass-card flex min-h-[228px] flex-col justify-end p-5 sm:min-h-[248px] sm:p-6 md:min-h-[260px] md:p-8"
+                      ? "glass-card bg-white/95 flex min-h-[228px] flex-col justify-end p-5 sm:min-h-[248px] sm:p-6 md:min-h-[260px] md:p-8 relative"
                       : "glass-card min-h-[228px] p-1.5 sm:min-h-[248px] md:min-h-[260px]"
                   }`}
                 >
                   <span aria-hidden className="bento-glow" />
                   {feature.type === "text" ? (
                     <>
-                      <h3 className="mb-2 text-lg font-semibold text-foreground sm:text-xl md:mb-3 md:text-2xl">
+                      <h3 className="mb-2 text-lg font-semibold text-slate-900 sm:text-xl md:mb-3 md:text-2xl">
                         {feature.title}
                       </h3>
-                      <p className="text-sm leading-relaxed text-text-secondary md:text-base">
+                      <p className="text-sm leading-relaxed text-slate-700 md:text-base">
                         {feature.description}
                       </p>
                     </>

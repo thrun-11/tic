@@ -45,35 +45,51 @@ export default function Footer() {
       id="products"
       className="relative overflow-hidden bg-[#d8ebf7]"
     >
-      <div className="relative w-full overflow-hidden min-h-[360px] sm:min-h-[400px] md:min-h-[auto] md:aspect-[12/5]">
-        <div className="absolute inset-x-0 top-0 z-10 flex flex-col gap-3 px-4 py-5 text-left text-sm text-slate-800 sm:px-6 sm:py-6 md:flex-row md:justify-end md:gap-14 md:px-12 md:py-8 md:text-right">
+      <div className="relative w-full overflow-hidden min-h-[450px] sm:min-h-[500px] md:min-h-[auto] md:aspect-[12/5]">
+        <div className="footer-logo-img absolute inset-0">
+          {/* Mobile Image */}
+          <Image
+            src="/images/logo_ice_mock_up.jpg.webp"
+            alt="Joyzen footer artwork mobile"
+            fill
+            className="object-cover object-center md:hidden"
+            sizes="100vw"
+          />
+          {/* Desktop Image */}
+          <Image
+            src="/images/icebluefoot.png"
+            alt="Joyzen footer artwork desktop"
+            fill
+            className="hidden md:block object-cover object-center"
+            sizes="100vw"
+          />
+          {/* Top gradient for smooth transition from previous section */}
+          <div className="absolute inset-x-0 top-0 h-[45%] bg-gradient-to-b from-[#d8ebf7] via-[#d8ebf7]/90 to-transparent pointer-events-none" />
+          
+          {/* Bottom gradient to blend into the base blue and provide contrast for white text */}
+          <div className="absolute inset-x-0 bottom-0 h-[35%] bg-gradient-to-t from-[#9ac5e3] via-[#9ac5e3]/90 to-transparent pointer-events-none" />
+        </div>
+
+        {/* Top Text - Centered, Dark */}
+        <div className="absolute inset-x-0 top-12 sm:top-16 z-10 flex flex-col items-center justify-center gap-2 px-4 text-center text-[13px] font-medium text-slate-700 sm:flex-row sm:gap-10 md:top-20 md:text-sm">
           <a
-            href="mailto:info@joyzenlife.com"
-            className="footer-info hover:text-foreground transition-colors"
+            href="mailto:info@joyzenlife.in"
+            className="footer-info hover:text-black transition-colors"
           >
-            Email: info@joyzenlife.com
+            Email: info@joyzenlife.in
           </a>
           <a
             href="https://instagram.com/joyzen.in"
             target="_blank"
             rel="noopener noreferrer"
-            className="footer-info hover:text-foreground transition-colors"
+            className="footer-info hover:text-black transition-colors"
           >
             Instagram: @joyzen.in
           </a>
         </div>
 
-        <div className="footer-logo-img absolute inset-0">
-          <Image
-            src="/images/icebluefoot.png"
-            alt="Joyzen footer artwork"
-            fill
-            className="object-cover object-center"
-            sizes="100vw"
-          />
-        </div>
-
-        <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col gap-2 px-4 py-4 text-[11px] leading-relaxed text-slate-800 sm:gap-3 sm:px-6 sm:py-5 sm:text-xs md:flex-row md:items-center md:justify-between md:gap-4 md:px-12">
+        {/* Bottom Text - Centered, White */}
+        <div className="absolute inset-x-0 bottom-8 sm:bottom-10 z-10 flex flex-col items-center justify-center gap-1.5 px-4 text-center text-[12px] font-medium leading-relaxed text-white/95 sm:gap-2 sm:text-[13px] md:bottom-12">
           <p>2026 Joyzen. Built for healthcare. Designed for trust.</p>
           <p>Designed and Developed by TIC Global Services</p>
         </div>
